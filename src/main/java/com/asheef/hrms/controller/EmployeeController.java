@@ -20,9 +20,9 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDto> createEmployee(@Valid @RequestBody EmployeeRequestDto employee) {
+    public ResponseEntity<ResponseDto> onboardEmployee(@Valid @RequestBody EmployeeRequestDto employee) {
 
-        String msg = employeeService.createEmployee(employee);
+        String msg = employeeService.onboardEmployee(employee);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseDto(Boolean.TRUE, HttpStatus.CREATED.value(), msg));
     }

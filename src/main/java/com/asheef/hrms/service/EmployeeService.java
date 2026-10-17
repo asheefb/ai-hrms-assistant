@@ -33,7 +33,7 @@ public class EmployeeService {
     }
 
 
-    public String createEmployee(EmployeeRequestDto employeeDto) {
+    public String onboardEmployee(EmployeeRequestDto employeeDto) {
         Employee employee = new Employee();
 
         employee.setEmpNumber(employeeDto.getEmpNumber());

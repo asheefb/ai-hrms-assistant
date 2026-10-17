@@ -21,3 +21,6 @@ Accept: application/json
   "reportingTo": 2,
   "email": "asheef.ahmed@example.com"
 }
+
+### Get Employee by ID
+GET {{baseUrl}}/api/employees/1

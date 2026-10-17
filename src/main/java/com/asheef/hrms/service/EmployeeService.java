@@ -50,7 +50,7 @@ public class EmployeeService {
         employee.setDepartment(deptId);
 
         Integer activeStatus = hrmModulesRepository.findChildByModuleCodes("CT02", "ST01")
-            .orElseThrow(() -> new IllegalArgumentException("Actively Employed status not Configured")).getId();
+                .orElseThrow(() -> new IllegalArgumentException("Actively Employed status not Configured")).getId();
 
         employee.setStatus(activeStatus);
 
@@ -81,16 +81,16 @@ public class EmployeeService {
 
         employee.setNationality(nationalityId);
 
-        if (employeeDto.getCountryCode() != null && !employeeDto.getCountryCode().isEmpty() && 
-            (employeeDto.getContactNumber() == null || employeeDto.getContactNumber().isEmpty())) 
+        if (employeeDto.getCountryCode() != null && !employeeDto.getCountryCode().isEmpty() &&
+                (employeeDto.getContactNumber() == null || employeeDto.getContactNumber().isEmpty()))
             throw new IllegalArgumentException("Contact number is required when country code is provided.");
-            
-        else if ((employeeDto.getCountryCode() == null || employeeDto.getCountryCode().isEmpty()) && 
-                 (employeeDto.getContactNumber() != null && !employeeDto.getContactNumber().isEmpty())) 
+
+        else if ((employeeDto.getCountryCode() == null || employeeDto.getCountryCode().isEmpty()) &&
+                (employeeDto.getContactNumber() != null && !employeeDto.getContactNumber().isEmpty()))
             throw new IllegalArgumentException("Country code is required when contact number is provided.");
         else if (employeeDto.getCountryCode() != null && !employeeDto.getCountryCode().isEmpty()) {
             MobileCountryCodes mobileCountryCodes = mobileCountryCodesRepository.findByCountryCode(employeeDto.getCountryCode())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid country code: " + employeeDto.getCountryCode()));
+                    .orElseThrow(() -> new IllegalArgumentException("Invalid country code: " + employeeDto.getCountryCode()));
 
             if (employeeDto.getContactNumber().length() != mobileCountryCodes.getNumberLength()) {
                 throw new IllegalArgumentException("Invalid contact number length for country code: " + employeeDto.getCountryCode());
@@ -112,23 +112,29 @@ public class EmployeeService {
         return Constant.SUCCESS;
     }
 
-    public EmployeeResponseDto getEmployeeById(Integer id) {
+    public EmployeeResponseDto getEmployeeById(Integer employeeId) {
+
+        if (employeeId == null) {
+            throw new IllegalArgumentException("Employee ID cannot be null");
+        }
+
+        return employeeRepository.findEmployeeById(employeeId)
+                .orElseThrow(() -> new IllegalArgumentException("Employee not found with ID: " + employeeId));
+    }
+
+    public String updateEmployee(Integer employeeId, EmployeeUpdateDto employeeDto) {
         return null;
     }
 
-    public String updateEmployee(Integer id, EmployeeUpdateDto employee) {
+    public String updateEmployeeStatus(Integer employeeId, Integer status) {
         return null;
     }
 
-    public String updateEmployeeStatus(Integer id, Integer status) {
+    public String linkUserToEmployee(Integer employeeId, Integer userId) {
         return null;
     }
 
-    public String linkUserToEmployee(Integer id, Integer userId) {
-        return null;
-    }
-
-    public String unlinkUserFromEmployee(Integer id) {
+    public String unlinkUserFromEmployee(Integer employeeId) {
         return null;
     }
 }

@@ -3,6 +3,8 @@ package com.asheef.hrms.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,7 +14,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table
+@Table(uniqueConstraints = {@UniqueConstraint(name = "uniq_emp_number", columnNames = {"emp_number"})},
+        indexes = {@Index(name = "idx_user_id", columnList = "user_id"),
+                @Index(name = "idx_reporting_to", columnList = "reporting_to"),
+                @Index(name = "idx_employee_status", columnList = "status")})
 public class Employee {
 
     @Id
@@ -52,7 +57,7 @@ public class Employee {
 
     @Column(nullable = false,
             columnDefinition = "INT UNSIGNED DEFAULT 0")
-    private Long reportingTo;
+    private Integer reportingTo;
 
     @Column(nullable = false)
     private LocalDate dateOfJoin;
@@ -85,9 +90,11 @@ public class Employee {
             columnDefinition = "MEDIUMINT UNSIGNED")
     private Integer modifiedBy;
 
-    @Column(insertable = false, updatable = false)
+    @CreationTimestamp
+    @Column(updatable = false, columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime created;
 
-    @Column(insertable = false, updatable = false)
+    @UpdateTimestamp
+    @Column(updatable = true, columnDefinition = "timestamp default current_timestamp on update current_timestamp")
     private LocalDateTime modified;
 }

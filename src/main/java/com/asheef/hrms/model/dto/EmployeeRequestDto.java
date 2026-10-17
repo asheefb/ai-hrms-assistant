@@ -31,9 +31,6 @@ public class EmployeeRequestDto {
     @NotNull(message = "Department is required")
     private Integer department;
 
-    @NotNull(message = "Employee status is required")
-    private Integer status;
-
     @NotNull(message = "Gender is required")
     private Integer gender;
 
@@ -43,7 +40,7 @@ public class EmployeeRequestDto {
     @NotNull(message = "Employee type is required")
     private Integer employeeType;
 
-    private Long reportingTo;
+    private Integer reportingTo;
 
     @NotNull(message = "Date of joining is required")
     private LocalDate dateOfJoin;
@@ -64,8 +61,6 @@ public class EmployeeRequestDto {
     private String countryCode;
 
     private String contactNumber;
-
-    private Integer userId;
 
     @NotNull(message = "Created by is required")
     private Integer createdBy;

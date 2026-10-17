@@ -33,10 +33,10 @@ public class CommonModules {
     private Integer modifiedBy;
 
     @CreationTimestamp
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
+    @Column(updatable = false ,columnDefinition = "timestamp default current_timestamp")
+    private LocalDateTime created;
 
     @UpdateTimestamp
-    @Column(updatable = true)
-    private LocalDateTime modifiedAt;
+    @Column(updatable = true, columnDefinition = "timestamp default current_timestamp on update current_timestamp")
+    private LocalDateTime modified;
 }

@@ -33,10 +33,10 @@ public class MobileCountryCodes {
     private Integer modifiedBy;
 
     @CreationTimestamp
-    @Column(updatable = false) 
+    @Column(updatable = false ,columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(updatable = true)
+    @Column(updatable = true, columnDefinition = "timestamp default current_timestamp on update current_timestamp")
     private LocalDateTime modifiedAt;
 }

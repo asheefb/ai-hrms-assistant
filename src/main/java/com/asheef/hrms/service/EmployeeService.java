@@ -2,11 +2,17 @@ package com.asheef.hrms.service;
 
 import com.asheef.hrms.constants.Constant;
 import com.asheef.hrms.entity.Employee;
+import com.asheef.hrms.entity.HrmModules;
 import com.asheef.hrms.entity.MobileCountryCodes;
+import com.asheef.hrms.entity.User;
 import com.asheef.hrms.model.dto.EmployeeRequestDto;
 import com.asheef.hrms.repo.EmployeeRepository;
+import com.asheef.hrms.repo.HrmModulesRepository;
 import com.asheef.hrms.repo.MobileCountryCodesRepository;
+import com.asheef.hrms.repo.UserRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class EmployeeService {
@@ -15,9 +21,15 @@ public class EmployeeService {
 
     private final MobileCountryCodesRepository mobileCountryCodesRepository;
 
-    public EmployeeService(EmployeeRepository employeeRepository, MobileCountryCodesRepository mobileCountryCodesRepository) {
+    private final HrmModulesRepository hrmModulesRepository;
+
+    private final UserRepository userRepository;
+
+    public EmployeeService(EmployeeRepository employeeRepository, MobileCountryCodesRepository mobileCountryCodesRepository, HrmModulesRepository hrmModulesRepository, UserRepository userRepository) {
         this.employeeRepository = employeeRepository;
         this.mobileCountryCodesRepository = mobileCountryCodesRepository;
+        this.hrmModulesRepository = hrmModulesRepository;
+        this.userRepository = userRepository;
     }
 
 
@@ -30,11 +42,30 @@ public class EmployeeService {
         employee.setOfficialEmail(employeeDto.getOfficialEmail());
         employee.setPersonalEmail(employeeDto.getPersonalEmail());
 
-        employee.setDepartment(employeeDto.getDepartment());
-        employee.setStatus(employeeDto.getStatus());
-        employee.setGender(employeeDto.getGender());
-        employee.setDesignation(employeeDto.getDesignation());
-        employee.setEmployeeType(employeeDto.getEmployeeType());
+        Integer deptId = hrmModulesRepository.findById(employeeDto.getDepartment())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid department ID: " + employeeDto.getDepartment())).getId();
+
+        employee.setDepartment(deptId);
+
+        Integer activeStatus = hrmModulesRepository.findChildByModuleCodes("CT02", "ST01")
+            .orElseThrow(() -> new IllegalArgumentException("Actively Employed status not Configured")).getId();
+
+        employee.setStatus(activeStatus);
+
+        Integer genderId = hrmModulesRepository.findById(employeeDto.getGender())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid gender ID: " + employeeDto.getGender())).getId();
+
+        employee.setGender(genderId);
+
+        Integer designationId = hrmModulesRepository.findById(employeeDto.getDesignation())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid designation ID: " + employeeDto.getDesignation())).getId();
+
+        employee.setDesignation(designationId);
+
+        Integer employeeTypeId = hrmModulesRepository.findById(employeeDto.getEmployeeType())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid employee type ID: " + employeeDto.getEmployeeType())).getId();
+
+        employee.setEmployeeType(employeeTypeId);
         employee.setReportingTo(employeeDto.getReportingTo());
 
         employee.setDateOfJoin(employeeDto.getDateOfJoin());
@@ -43,9 +74,11 @@ public class EmployeeService {
         employee.setDateOfBirth(employeeDto.getDateOfBirth());
         employee.setFatherName(employeeDto.getFatherName());
 
-        employee.setNationality(employeeDto.getNationality());
+        Integer nationalityId = hrmModulesRepository.findById(employeeDto.getNationality())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid nationality ID: " + employeeDto.getNationality())).getId();
 
-        
+        employee.setNationality(nationalityId);
+
         if (employeeDto.getCountryCode() != null && !employeeDto.getCountryCode().isEmpty() && 
             (employeeDto.getContactNumber() == null || employeeDto.getContactNumber().isEmpty())) 
             throw new IllegalArgumentException("Contact number is required when country code is provided.");
@@ -64,13 +97,12 @@ public class EmployeeService {
             employee.setCountryCode(employeeDto.getCountryCode());
         }
 
-        
-
-        
-
         employee.setContactNumber(employeeDto.getContactNumber());
 
-        employee.setUserId(employeeDto.getUserId());
+        Integer userId = userRepository.findByUsername(Constant.NO_LOGIN_USERNAME)
+                .orElseThrow(() -> new IllegalArgumentException("User with username '" + Constant.NO_LOGIN_USERNAME + "' not found")).getId();
+
+        employee.setUserId(userId);
         employee.setCreatedBy(employeeDto.getCreatedBy());
         employee.setModifiedBy(employeeDto.getModifiedBy());
 

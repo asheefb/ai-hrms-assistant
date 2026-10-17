@@ -4,6 +4,7 @@ import com.asheef.hrms.entity.Employee;
 import com.asheef.hrms.model.dto.EmployeeRequestDto;
 import com.asheef.hrms.service.EmployeeService;
 import com.asheef.hrms.utils.ResponseDto;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDto> createEmployee(@RequestBody EmployeeRequestDto employee) {
+    public ResponseEntity<ResponseDto> createEmployee(@Valid @RequestBody EmployeeRequestDto employee) {
 
         String msg = employeeService.createEmployee(employee);
         return ResponseEntity.status(HttpStatus.CREATED)

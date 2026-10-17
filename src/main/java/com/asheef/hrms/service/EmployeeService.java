@@ -98,7 +98,7 @@ public class EmployeeService {
                 throw new IllegalArgumentException("Invalid contact number length for country code: " + employeeDto.getCountryCode());
             }
 
-            employee.setCountryCode(employeeDto.getCountryCode());
+            employee.setCountryCode(mobileCountryCodes.getCountryCode());
         }
 
         employee.setContactNumber(employeeDto.getContactNumber());

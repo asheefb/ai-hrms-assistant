@@ -19,10 +19,10 @@ public class EmployeeRequestDto {
     private String empNumber;
 
     @Size(max = 50, message = "First name must not exceed 50 characters")
-    private String empFirstname;
+    private String firstName;
 
     @Size(max = 50, message = "Last name must not exceed 50 characters")
-    private String empLastname;
+    private String lastName;
 
     private String officialEmail;
 

@@ -6,6 +6,8 @@ import com.asheef.hrms.entity.HrmModules;
 import com.asheef.hrms.entity.MobileCountryCodes;
 import com.asheef.hrms.entity.User;
 import com.asheef.hrms.model.dto.EmployeeRequestDto;
+import com.asheef.hrms.model.dto.EmployeeUpdateDto;
+import com.asheef.hrms.model.response.EmployeeResponseDto;
 import com.asheef.hrms.repo.EmployeeRepository;
 import com.asheef.hrms.repo.HrmModulesRepository;
 import com.asheef.hrms.repo.MobileCountryCodesRepository;
@@ -37,8 +39,8 @@ public class EmployeeService {
         Employee employee = new Employee();
 
         employee.setEmpNumber(employeeDto.getEmpNumber());
-        employee.setEmpFirstname(employeeDto.getEmpFirstname());
-        employee.setEmpLastname(employeeDto.getEmpLastname());
+        employee.setEmpFirstname(employeeDto.getFirstName());
+        employee.setEmpLastname(employeeDto.getLastName());
         employee.setOfficialEmail(employeeDto.getOfficialEmail());
         employee.setPersonalEmail(employeeDto.getPersonalEmail());
 
@@ -108,5 +110,25 @@ public class EmployeeService {
 
         employeeRepository.save(employee);
         return Constant.SUCCESS;
+    }
+
+    public EmployeeResponseDto getEmployeeById(Integer id) {
+        return null;
+    }
+
+    public String updateEmployee(Integer id, EmployeeUpdateDto employee) {
+        return null;
+    }
+
+    public String updateEmployeeStatus(Integer id, Integer status) {
+        return null;
+    }
+
+    public String linkUserToEmployee(Integer id, Integer userId) {
+        return null;
+    }
+
+    public String unlinkUserFromEmployee(Integer id) {
+        return null;
     }
 }

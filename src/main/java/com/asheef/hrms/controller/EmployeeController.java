@@ -2,6 +2,8 @@ package com.asheef.hrms.controller;
 
 import com.asheef.hrms.entity.Employee;
 import com.asheef.hrms.model.dto.EmployeeRequestDto;
+import com.asheef.hrms.model.dto.EmployeeUpdateDto;
+import com.asheef.hrms.model.response.EmployeeResponseDto;
 import com.asheef.hrms.service.EmployeeService;
 import com.asheef.hrms.utils.ResponseDto;
 import jakarta.validation.Valid;
@@ -27,5 +29,34 @@ public class EmployeeController {
                 .body(new ResponseDto(Boolean.TRUE, HttpStatus.CREATED.value(), msg));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ResponseDto> getEmployeeById(@PathVariable Integer id) {
+        EmployeeResponseDto employee = employeeService.getEmployeeById(id);
+        return ResponseEntity.ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), employee, "Employee found"));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseDto> updateEmployee(@PathVariable Integer id, @Valid @RequestBody EmployeeUpdateDto employee) {
+        String msg = employeeService.updateEmployee(id, employee);
+        return ResponseEntity.ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), msg));
+    }
+
+    @PatchMapping("/{id}/status")
+    public ResponseEntity<ResponseDto> updateEmployeeStatus(@PathVariable Integer id, @RequestParam Integer status) {
+        String msg = employeeService.updateEmployeeStatus(id, status);
+        return ResponseEntity.ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), msg));
+    }
+
+    @PutMapping("/{id}/link-user")
+    public ResponseEntity<ResponseDto> linkUserToEmployee(@PathVariable Integer id, @RequestParam Integer userId) {
+        String msg = employeeService.linkUserToEmployee(id, userId);
+        return ResponseEntity.ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), msg));
+    }
+
+    @PatchMapping("/{id}/unlink-user")
+    public ResponseEntity<ResponseDto> unlinkUserFromEmployee(@PathVariable Integer id) {
+        String msg = employeeService.unlinkUserFromEmployee(id);
+        return ResponseEntity.ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), msg));
+    }
 
 }

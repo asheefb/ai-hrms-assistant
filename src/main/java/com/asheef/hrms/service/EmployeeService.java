@@ -124,8 +124,6 @@ public class EmployeeService {
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found with ID: " + employeeId));
 
         return Helper.getEmployeeResponseDto(employeeResponseProjection);
-
-        
     }
 
     public String updateEmployee(Integer employeeId, EmployeeUpdateDto employeeDto) {

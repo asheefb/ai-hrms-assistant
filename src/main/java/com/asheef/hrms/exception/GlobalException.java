@@ -3,8 +3,10 @@ package com.asheef.hrms.exception;
 import com.asheef.hrms.utils.ErrorStructure;
 import com.asheef.hrms.utils.ResponseDto;
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -87,6 +89,36 @@ public class GlobalException {
     public ResponseEntity<ResponseDto> handleIllegalArgumentException(IllegalArgumentException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ResponseDto(Boolean.FALSE, HttpStatus.BAD_REQUEST.value(), e.getMessage())
+        );
+    }
+
+    /*
+     * This is for handle Exception for JPA System Exception
+     *  Example: An error occurs while Hibernate extracts data from the database.
+     *
+     * @param e
+     * @return error Structure
+     */
+    @ExceptionHandler(JpaSystemException.class)
+    public ResponseEntity<ResponseDto> handleJpaSystemException(JpaSystemException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                new ResponseDto(Boolean.FALSE, HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        e.getMostSpecificCause().getMessage())
+        );
+    }
+
+    /**
+     * This is for handle Exception for Data Access Exception
+     * Example: An error occurs while performing a database operation.
+     *
+     * @param e
+     * @return error Structure
+     */
+    @ExceptionHandler(DataAccessException.class)
+    public ResponseEntity<ResponseDto> handleDataAccessException(DataAccessException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                new ResponseDto(Boolean.FALSE, HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        e.getMostSpecificCause().getMessage())
         );
     }
 

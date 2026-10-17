@@ -1,0 +1,23 @@
+@baseUrl = http://localhost:8080
+
+### Health Check
+GET {{baseUrl}}/api/health
+Accept: application/json
+
+### Create Employee
+POST {{baseUrl}}/api/employees
+Content-Type: application/json
+Accept: application/json
+
+
+{
+  "empNumber": "EMP001",
+  "firstName": "Asheef",
+  "lastName": "Ahmed",
+  "department": 1,
+  "status": 1,
+  "gender": 1,
+  "employeeType": 1,
+  "reportingTo": 2,
+  "email": "asheef.ahmed@example.com"
+}

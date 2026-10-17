@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 
 @RestControllerAdvice
 public class GlobalException {
@@ -92,18 +93,30 @@ public class GlobalException {
         );
     }
 
-    /*
-     * This is for handle Exception for JPA System Exception
-     *  Example: An error occurs while Hibernate extracts data from the database.
+    /**
+     * This is for handling JPA System Exceptions.
+     * Example: Hibernate fails to extract a column value from the database.
      *
-     * @param e
-     * @return error Structure
+     * @param e the JPA system exception
+     * @return error response containing the exception message and row information
      */
     @ExceptionHandler(JpaSystemException.class)
     public ResponseEntity<ResponseDto> handleJpaSystemException(JpaSystemException e) {
+        String message = e.getMostSpecificCause().getMessage();
+        String row = null;
+
+        if (e.getMessage() != null && e.getMessage().matches("(?s).*column \\[\\d+\\].*")) {
+            Matcher matcher = java.util.regex.Pattern
+                    .compile("column \\[(\\d+)\\]")
+                    .matcher(e.getMessage());
+
+            if (matcher.find())
+                row = "row[" + matcher.group(1) + "]";
+        }
+
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 new ResponseDto(Boolean.FALSE, HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        e.getMostSpecificCause().getMessage())
+                        message + (row != null ? " - " + row : ""))
         );
     }
 

@@ -1,9 +1,10 @@
 package com.asheef.hrms.repo;
 
 import com.asheef.hrms.entity.Employee;
-import com.asheef.hrms.model.response.EmployeeResponseDto;
+import com.asheef.hrms.model.response.EmployeeResponseProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -13,31 +14,31 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     @Query(value = """
             select\s
-                    emp.id,
-                    emp.emp_number,
-                    emp.emp_firstname,
-                    emp.emp_lastname,
-                    emp.official_email,
-                    emp.personal_email,
+                    emp.id as id,
+                    emp.emp_number as empNumber,
+                    emp.emp_firstname as firstName,
+                    emp.emp_lastname as lastName,
+                    emp.official_email as officeEmail,
+                    emp.personal_email as personalEmail,
                     dept.description as department,
                     gender.description as gender,
                     status.description as status,
                     desg.description as designation,
-                    emptype.description as employee_type,
-                    concat(reporting.emp_firstname, ' ', reporting.emp_lastname) as reporting_to,
-                    emp.date_of_join,
-                    emp.location,
-                    emp.sub_location,
-                    emp.date_of_birth,
-                    emp.father_name,
+                    emptype.description as employeeType,
+                    concat(reporting.emp_firstname, ' ', reporting.emp_lastname) as reportingTo,
+                    CAST(NULLIF(CAST(emp.date_of_join AS CHAR), '0000-00-00') AS DATE) as dateOfJoin,
+                    emp.location as location,
+                    emp.sub_location as subLocation,
+                    CAST(NULLIF(CAST(emp.date_of_birth AS CHAR), '0000-00-00') AS DATE) as dateOfBirth,
+                    emp.father_name as fatherName,
                     nationality.description as nationality,
-                    emp.country_code,
-                    emp.contact_number,
-                    emp.user_id,
-                    createdByUser.name as created_by,
-                    emp.created,
-                    updatedByUser.name as updated_by,
-                    emp.modified
+                    emp.country_code as countryCode,
+                    emp.contact_number as contactNumber,
+                    emp.user_id as userId,
+                    createdByUser.name as createdBy,
+                    emp.created as created,
+                    updatedByUser.name as updatedBy,
+                    emp.modified as modified
                 from employee emp
                 left join hrm_modules deptctrl on deptctrl.module_id = 1 AND deptctrl.module_code = 'CT02'
                 left join hrm_modules dept on dept.id = emp.department and dept.module_id = deptctrl.id
@@ -57,5 +58,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
                 where emp.id = :employeeId
             """, nativeQuery = true
     )
-    public Optional<EmployeeResponseDto> findEmployeeById(Integer employeeId);
+    Optional<EmployeeResponseProjection> findEmployeeById(@Param("employeeId") Integer employeeId);
 }

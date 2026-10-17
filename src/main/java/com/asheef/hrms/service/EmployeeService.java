@@ -1,5 +1,6 @@
 package com.asheef.hrms.service;
 
+import com.asheef.hrms.commonhelper.Helper;
 import com.asheef.hrms.constants.Constant;
 import com.asheef.hrms.entity.Employee;
 import com.asheef.hrms.entity.HrmModules;
@@ -8,6 +9,7 @@ import com.asheef.hrms.entity.User;
 import com.asheef.hrms.model.dto.EmployeeRequestDto;
 import com.asheef.hrms.model.dto.EmployeeUpdateDto;
 import com.asheef.hrms.model.response.EmployeeResponseDto;
+import com.asheef.hrms.model.response.EmployeeResponseProjection;
 import com.asheef.hrms.repo.EmployeeRepository;
 import com.asheef.hrms.repo.HrmModulesRepository;
 import com.asheef.hrms.repo.MobileCountryCodesRepository;
@@ -118,8 +120,12 @@ public class EmployeeService {
             throw new IllegalArgumentException("Employee ID cannot be null");
         }
 
-        return employeeRepository.findEmployeeById(employeeId)
+        EmployeeResponseProjection employeeResponseProjection = employeeRepository.findEmployeeById(employeeId)
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found with ID: " + employeeId));
+
+        return Helper.getEmployeeResponseDto(employeeResponseProjection);
+
+        
     }
 
     public String updateEmployee(Integer employeeId, EmployeeUpdateDto employeeDto) {

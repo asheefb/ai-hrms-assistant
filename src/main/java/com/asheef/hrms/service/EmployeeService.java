@@ -3,7 +3,9 @@ package com.asheef.hrms.service;
 import com.asheef.hrms.commonhelper.Helper;
 import com.asheef.hrms.constants.Constant;
 import com.asheef.hrms.entity.Employee;
+import com.asheef.hrms.entity.HrmModules;
 import com.asheef.hrms.entity.MobileCountryCodes;
+import com.asheef.hrms.entity.User;
 import com.asheef.hrms.model.dto.EmployeeRequestDto;
 import com.asheef.hrms.model.dto.EmployeeUpdateDto;
 import com.asheef.hrms.model.response.EmployeeResponseDto;
@@ -13,6 +15,8 @@ import com.asheef.hrms.repo.HrmModulesRepository;
 import com.asheef.hrms.repo.MobileCountryCodesRepository;
 import com.asheef.hrms.repo.UserRepository;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 public class EmployeeService {
@@ -80,13 +84,13 @@ public class EmployeeService {
         employee.setNationality(nationalityId);
 
         if (employeeDto.getCountryCode() != null && !employeeDto.getCountryCode().isEmpty() &&
-                (employeeDto.getContactNumber() == null || employeeDto.getContactNumber().isEmpty()))
+                (employeeDto.getContactNumber() == null || employeeDto.getContactNumber().isEmpty())) {
             throw new IllegalArgumentException(Constant.CONTACT_NUMBER_REQUIRED);
 
-        else if ((employeeDto.getCountryCode() == null || employeeDto.getCountryCode().isEmpty()) &&
-                (employeeDto.getContactNumber() != null && !employeeDto.getContactNumber().isEmpty()))
+        } else if ((employeeDto.getCountryCode() == null || employeeDto.getCountryCode().isEmpty()) &&
+                (employeeDto.getContactNumber() != null && !employeeDto.getContactNumber().isEmpty())) {
             throw new IllegalArgumentException(Constant.COUNTRY_CODE_REQUIRED);
-        else if (employeeDto.getCountryCode() != null && !employeeDto.getCountryCode().isEmpty()) {
+        } else if (employeeDto.getCountryCode() != null && !employeeDto.getCountryCode().isEmpty()) {
             MobileCountryCodes mobileCountryCodes = mobileCountryCodesRepository.findByCountryCode(employeeDto.getCountryCode())
                     .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_COUNTRY_CODE));
 
@@ -95,9 +99,8 @@ public class EmployeeService {
             }
 
             employee.setCountryCode(mobileCountryCodes.getCountryCode());
+            employee.setContactNumber(employeeDto.getContactNumber());
         }
-
-        employee.setContactNumber(employeeDto.getContactNumber());
 
         Integer userId = userRepository.findByUsername(Constant.NO_LOGIN_USERNAME)
                 .orElseThrow(() -> new IllegalArgumentException(Constant.USER_NAME + Constant.NO_LOGIN_USERNAME + Constant.NOT_FOUND)).getId();
@@ -228,21 +231,75 @@ public class EmployeeService {
             }
 
             employee.setCountryCode(mobileCountryCodes.getCountryCode());
+            employee.setContactNumber(employeeDto.getContactNumber());
         }
 
+        employee.setModifiedBy(employeeDto.getModifiedBy());
+        employee.setModified(LocalDateTime.now());
 
-        return null;
+        return Constant.SUCCESS;
     }
 
     public String updateEmployeeStatus(Integer employeeId, Integer status) {
-        return null;
+
+        if (employeeId == null) {
+            throw new IllegalArgumentException(Constant.EMPLOYEE_ID_REQUIRED);
+        }
+
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new IllegalArgumentException(Constant.EMPLOYEE_NOT_FOUND));
+
+        if (status == null)
+            throw new IllegalArgumentException(Constant.INVALID_STATUS);
+
+        Integer statusId = hrmModulesRepository.findById(status)
+                .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_STATUS)).getId();
+
+        employee.setStatus(statusId);
+        employee.setModifiedBy(employee.getModifiedBy());
+        employee.setModified(LocalDateTime.now());
+        return Constant.SUCCESS;
     }
 
     public String linkUserToEmployee(Integer employeeId, Integer userId) {
-        return null;
+
+        if (employeeId == null)
+            throw new IllegalArgumentException(Constant.EMPLOYEE_ID_REQUIRED);
+
+
+        if (userId == null)
+            throw new IllegalArgumentException(Constant.USER_ID_REQUIRED);
+
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new IllegalArgumentException(Constant.EMPLOYEE_NOT_FOUND));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_USER_ID));
+
+        if (employeeRepository.findByUserId(user.getId()).isPresent()) {
+            throw new IllegalArgumentException(Constant.ALREADY_LINKED_USER);
+        }
+
+        employee.setUserId(user.getId());
+        employee.setModifiedBy(1);
+        employee.setModified(LocalDateTime.now());
+
+        return Constant.SUCCESS;
     }
 
     public String unlinkUserFromEmployee(Integer employeeId) {
-        return null;
+
+        if (employeeId == null)
+            throw new IllegalArgumentException(Constant.EMPLOYEE_ID_REQUIRED);
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new IllegalArgumentException(Constant.EMPLOYEE_NOT_FOUND));
+
+        Integer noLoginUserId = userRepository.findByUsername(Constant.NO_LOGIN_USERNAME)
+                .orElseThrow(() -> new IllegalArgumentException(Constant.USER_NAME + Constant.NO_LOGIN_USERNAME + Constant.NOT_FOUND)).getId();
+
+        employee.setUserId(noLoginUserId);
+        employee.setModifiedBy(1);
+        employee.setModified(LocalDateTime.now());
+        return Constant.SUCCESS;
     }
 }

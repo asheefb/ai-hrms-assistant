@@ -25,5 +25,7 @@ public class Constant {
     public static final String EMPLOYEE_ID_REQUIRED = "Employee ID is required";
     public static final String FIRST_NAME_TOO_LONG = "First name must not exceed 50 characters";
     public static final String LAST_NAME_TOO_LONG = "Last name must not exceed 50 characters";
-
+    public static final String USER_ID_REQUIRED = "User ID is required";
+    public static final String INVALID_USER_ID = "Invalid user ID: ";
+    public static final String ALREADY_LINKED_USER = "User is already linked to another employee.";
 }

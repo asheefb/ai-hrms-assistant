@@ -59,4 +59,6 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
             """, nativeQuery = true
     )
     Optional<EmployeeResponseProjection> findEmployeeById(@Param("employeeId") Integer employeeId);
+
+    Optional<Employee> findByUserId(Integer userId);
 }

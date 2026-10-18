@@ -25,76 +25,88 @@ public class Employee {
     @Column(columnDefinition = "INT UNSIGNED")
     private Integer id;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(name = "emp_number", nullable = false, length = 20)
     private String empNumber;
 
-    @Column(length = 50)
+    @Column(name = "emp_firstname", length = 50)
     private String empFirstname;
 
-    @Column(length = 50)
+    @Column(name = "emp_lastname", length = 50)
     private String empLastname;
 
-    @Column(length = 50)
+    @Column(name = "official_email", length = 50)
     private String officialEmail;
 
-    @Column(length = 50)
+    @Column(name = "personal_email", length = 50)
     private String personalEmail;
 
-    @Column(nullable = false)
-    private Integer department;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department", nullable = false)
+    private HrmModules department;
 
-    @Column(nullable = false)
-    private Integer status;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status", nullable = false)
+    private HrmModules status;
 
-    @Column(nullable = false)
-    private Integer gender;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "gender", nullable = false)
+    private HrmModules gender;
 
-    @Column(nullable = false)
-    private Integer designation;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "designation", nullable = false)
+    private HrmModules designation;
 
-    @Column(nullable = false)
-    private Integer employeeType;
 
-    @Column(nullable = false,
-            columnDefinition = "INT UNSIGNED DEFAULT 0")
-    private Integer reportingTo;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_type", nullable = false)
+    private HrmModules employeeType;
 
-    @Column(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "nationality", nullable = false)
+    private HrmModules nationality;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reporting_to")
+    private Employee reportingManager;
+
+    @Column(name = "date_of_join", nullable = false)
     private LocalDate dateOfJoin;
 
+    @Column(name = "location")
     private Integer location;
 
+    @Column(name = "sub_location")
     private Integer subLocation;
 
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Column(length = 60)
+    @Column(name = "father_name", length = 60)
     private String fatherName;
 
-    @Column(nullable = false)
-    private Integer nationality;
-
-    @Column(length = 5)
+    @Column(name = "country_code", length = 5)
     private String countryCode;
 
-    @Column(length = 30)
+    @Column(name = "contact_number", length = 30)
     private String contactNumber;
 
     private Integer userId;
 
-    @Column(nullable = false,
+    @Column(name = "created_by", nullable = false,
             columnDefinition = "MEDIUMINT UNSIGNED")
     private Integer createdBy;
 
-    @Column(nullable = false,
+    @Column(name = "modified_by", nullable = false,
             columnDefinition = "MEDIUMINT UNSIGNED")
     private Integer modifiedBy;
 
     @CreationTimestamp
-    @Column(updatable = false, columnDefinition = "timestamp default current_timestamp")
+    @Column(name = "created", updatable = false,
+            columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime created;
 
     @UpdateTimestamp
-    @Column(updatable = true, columnDefinition = "timestamp default current_timestamp on update current_timestamp")
+    @Column(name = "modified",
+            columnDefinition = "timestamp default current_timestamp on update current_timestamp")
     private LocalDateTime modified;
 }

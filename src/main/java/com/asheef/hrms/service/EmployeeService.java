@@ -2,6 +2,7 @@ package com.asheef.hrms.service;
 
 import com.asheef.hrms.commonhelper.Helper;
 import com.asheef.hrms.constants.Constant;
+import com.asheef.hrms.constants.ControlModules;
 import com.asheef.hrms.entity.Employee;
 import com.asheef.hrms.entity.HrmModules;
 import com.asheef.hrms.entity.MobileCountryCodes;
@@ -46,27 +47,27 @@ public class EmployeeService {
         employee.setOfficialEmail(employeeDto.getOfficialEmail());
         employee.setPersonalEmail(employeeDto.getPersonalEmail());
 
-        Integer deptId = hrmModulesRepository.findById(employeeDto.getDepartment())
+        Integer deptId = hrmModulesRepository.findByIdAndCtrlModuleCode(employeeDto.getDepartment(), ControlModules.DEPARTMENT)
                 .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_DEPARTMENT + employeeDto.getDepartment())).getId();
 
         employee.setDepartment(deptId);
 
-        Integer activeStatus = hrmModulesRepository.findChildByModuleCodes("CT02", "ST01")
+        Integer activeStatus = hrmModulesRepository.findChildByModuleCodes(ControlModules.STATUS_OF_EMPLOYMENT, "ST01")
                 .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_ACTIVE_STATUS)).getId();
 
         employee.setStatus(activeStatus);
 
-        Integer genderId = hrmModulesRepository.findById(employeeDto.getGender())
+        Integer genderId = hrmModulesRepository.findByIdAndCtrlModuleCode(employeeDto.getGender(), ControlModules.GENDER)
                 .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_GENDER)).getId();
 
         employee.setGender(genderId);
 
-        Integer designationId = hrmModulesRepository.findById(employeeDto.getDesignation())
+        Integer designationId = hrmModulesRepository.findByIdAndCtrlModuleCode(employeeDto.getDesignation(), ControlModules.DESIGNATION)
                 .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_DESIGNATION)).getId();
 
         employee.setDesignation(designationId);
 
-        Integer employeeTypeId = hrmModulesRepository.findById(employeeDto.getEmployeeType())
+        Integer employeeTypeId = hrmModulesRepository.findByIdAndCtrlModuleCode(employeeDto.getEmployeeType(), ControlModules.EMPLOYEE_TYPE)
                 .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_EMPLOYEE_TYPE)).getId();
 
         employee.setEmployeeType(employeeTypeId);
@@ -78,7 +79,7 @@ public class EmployeeService {
         employee.setDateOfBirth(employeeDto.getDateOfBirth());
         employee.setFatherName(employeeDto.getFatherName());
 
-        Integer nationalityId = hrmModulesRepository.findById(employeeDto.getNationality())
+        Integer nationalityId = hrmModulesRepository.findByIdAndCtrlModuleCode(employeeDto.getNationality(), ControlModules.NATIONALITY)
                 .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_NATIONALITY)).getId();
 
         employee.setNationality(nationalityId);
@@ -106,8 +107,8 @@ public class EmployeeService {
                 .orElseThrow(() -> new IllegalArgumentException(Constant.USER_NAME + Constant.NO_LOGIN_USERNAME + Constant.NOT_FOUND)).getId();
 
         employee.setUserId(userId);
-        employee.setCreatedBy(employeeDto.getCreatedBy());
-        employee.setModifiedBy(employeeDto.getModifiedBy());
+        employee.setCreatedBy(1);
+        employee.setModifiedBy(1);
 
         employeeRepository.save(employee);
         return Constant.SUCCESS;
@@ -158,32 +159,32 @@ public class EmployeeService {
         }
 
         if (employeeDto.getDepartment() != null && !employeeDto.getDepartment().equals(employee.getDepartment())) {
-            Integer deptId = hrmModulesRepository.findById(employeeDto.getDepartment())
+            Integer deptId = hrmModulesRepository.findByIdAndCtrlModuleCode(employeeDto.getDepartment(), ControlModules.DEPARTMENT)
                     .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_DEPARTMENT)).getId();
             employee.setDepartment(deptId);
         }
 
         if (employeeDto.getGender() != null && !employeeDto.getGender().equals(employee.getGender())) {
-            Integer genderId = hrmModulesRepository.findById(employeeDto.getGender())
+            Integer genderId = hrmModulesRepository.findByIdAndCtrlModuleCode(employeeDto.getGender(), ControlModules.GENDER)
                     .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_GENDER)).getId();
             employee.setGender(genderId);
         }
 
         if (employeeDto.getStatus() != null && !employeeDto.getStatus().equals(employee.getStatus())) {
-            Integer statusId = hrmModulesRepository.findById(employeeDto.getStatus())
+            Integer statusId = hrmModulesRepository.findByIdAndCtrlModuleCode(employeeDto.getStatus(), ControlModules.STATUS_OF_EMPLOYMENT)
                     .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_STATUS)).getId();
             employee.setStatus(statusId);
         }
 
         if (employeeDto.getDesignation() != null && !employeeDto.getDesignation().equals(employee.getDesignation())) {
-            Integer designationId = hrmModulesRepository.findById(employeeDto.getDesignation())
+            Integer designationId = hrmModulesRepository.findByIdAndCtrlModuleCode(employeeDto.getDesignation(), ControlModules.DESIGNATION)
                     .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_DESIGNATION)).getId();
             employee.setDesignation(designationId);
         }
 
 
         if (employeeDto.getEmployeeType() != null && !employeeDto.getEmployeeType().equals(employee.getEmployeeType())) {
-            Integer employeeTypeId = hrmModulesRepository.findById(employeeDto.getEmployeeType())
+            Integer employeeTypeId = hrmModulesRepository.findByIdAndCtrlModuleCode(employeeDto.getEmployeeType(), ControlModules.EMPLOYEE_TYPE)
                     .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_EMPLOYEE_TYPE)).getId();
             employee.setEmployeeType(employeeTypeId);
         }
@@ -211,7 +212,7 @@ public class EmployeeService {
         }
 
         if (employeeDto.getNationality() != null && !employeeDto.getNationality().equals(employee.getNationality())) {
-            Integer nationalityId = hrmModulesRepository.findById(employeeDto.getNationality())
+            Integer nationalityId = hrmModulesRepository.findByIdAndCtrlModuleCode(employeeDto.getNationality(), ControlModules.NATIONALITY)
                     .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_NATIONALITY)).getId();
             employee.setNationality(nationalityId);
         }
@@ -235,7 +236,8 @@ public class EmployeeService {
         }
 
         employee.setModifiedBy(employeeDto.getModifiedBy());
-        employee.setModified(LocalDateTime.now());
+
+        employeeRepository.save(employee);
 
         return Constant.SUCCESS;
     }
@@ -252,12 +254,13 @@ public class EmployeeService {
         if (status == null)
             throw new IllegalArgumentException(Constant.INVALID_STATUS);
 
-        Integer statusId = hrmModulesRepository.findById(status)
+        Integer statusId = hrmModulesRepository.findByIdAndCtrlModuleCode(status, ControlModules.STATUS_OF_EMPLOYMENT)
                 .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_STATUS)).getId();
 
         employee.setStatus(statusId);
         employee.setModifiedBy(employee.getModifiedBy());
-        employee.setModified(LocalDateTime.now());
+
+        employeeRepository.save(employee);
         return Constant.SUCCESS;
     }
 
@@ -265,7 +268,6 @@ public class EmployeeService {
 
         if (employeeId == null)
             throw new IllegalArgumentException(Constant.EMPLOYEE_ID_REQUIRED);
-
 
         if (userId == null)
             throw new IllegalArgumentException(Constant.USER_ID_REQUIRED);
@@ -282,7 +284,8 @@ public class EmployeeService {
 
         employee.setUserId(user.getId());
         employee.setModifiedBy(1);
-        employee.setModified(LocalDateTime.now());
+
+        employeeRepository.save(employee);
 
         return Constant.SUCCESS;
     }
@@ -299,7 +302,9 @@ public class EmployeeService {
 
         employee.setUserId(noLoginUserId);
         employee.setModifiedBy(1);
-        employee.setModified(LocalDateTime.now());
+
+        employeeRepository.save(employee);
+
         return Constant.SUCCESS;
     }
 }

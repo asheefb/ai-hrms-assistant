@@ -61,10 +61,4 @@ public class EmployeeRequestDto {
     private String countryCode;
 
     private String contactNumber;
-
-    @NotNull(message = "Created by is required")
-    private Integer createdBy;
-
-    @NotNull(message = "Modified by is required")
-    private Integer modifiedBy;
 }

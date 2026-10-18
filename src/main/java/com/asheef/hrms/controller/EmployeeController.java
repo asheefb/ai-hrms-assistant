@@ -47,7 +47,7 @@ public class EmployeeController {
         return ResponseEntity.ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), msg));
     }
 
-    @PutMapping("/{id}/link-user")
+    @PatchMapping("/{id}/link-user")
     public ResponseEntity<ResponseDto> linkUserToEmployee(@PathVariable Integer id, @RequestParam Integer userId) {
         String msg = employeeService.linkUserToEmployee(id, userId);
         return ResponseEntity.ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), msg));
@@ -58,5 +58,7 @@ public class EmployeeController {
         String msg = employeeService.unlinkUserFromEmployee(id);
         return ResponseEntity.ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), msg));
     }
+
+
 
 }

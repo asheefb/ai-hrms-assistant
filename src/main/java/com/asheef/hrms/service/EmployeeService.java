@@ -4,9 +4,9 @@ import com.asheef.hrms.commonhelper.Helper;
 import com.asheef.hrms.constants.Constant;
 import com.asheef.hrms.constants.ControlModules;
 import com.asheef.hrms.entity.Employee;
-import com.asheef.hrms.entity.HrmModules;
 import com.asheef.hrms.entity.MobileCountryCodes;
 import com.asheef.hrms.entity.User;
+import com.asheef.hrms.model.dto.EmployeeListRequestDto;
 import com.asheef.hrms.model.dto.EmployeeRequestDto;
 import com.asheef.hrms.model.dto.EmployeeUpdateDto;
 import com.asheef.hrms.model.response.EmployeeResponseDto;
@@ -15,9 +15,14 @@ import com.asheef.hrms.repo.EmployeeRepository;
 import com.asheef.hrms.repo.HrmModulesRepository;
 import com.asheef.hrms.repo.MobileCountryCodesRepository;
 import com.asheef.hrms.repo.UserRepository;
+import com.asheef.hrms.utils.SortUtil;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class EmployeeService {
@@ -306,5 +311,66 @@ public class EmployeeService {
         employeeRepository.save(employee);
 
         return Constant.SUCCESS;
+    }
+
+    public List<EmployeeResponseDto> getAllEmployees(EmployeeListRequestDto dto) {
+
+        List<Sort.Order> orders = SortUtil.getSortValues(dto.getSortBy());
+
+        int pageNo = dto.getPageNumber() > 0
+                ? dto.getPageNumber() - 1
+                : 0;
+
+        Pageable paging = PageRequest.of(
+                pageNo,
+                dto.getPageSize(),
+                Sort.by(orders)
+        );
+
+        String fieldName = dto.getFieldName(), search = dto.getSearch();
+        List<Integer> status = dto.getStatus();
+
+        boolean hasFieldName = fieldName != null && !fieldName.isBlank();
+        boolean hasSearch = search != null && !search.isBlank();
+
+        if (hasFieldName != hasSearch) {
+            throw new IllegalArgumentException("Both field name and search value must be provided together.");
+        }
+
+        if (!hasFieldName) {
+
+            Page<Employee> employees;
+
+            if (status == null || status.isEmpty()) {
+                employees = employeeRepository.findAll(paging);
+            } else {
+                employees = employeeRepository.findAllByStatusIn(status, paging);
+            }
+
+            return employees.map(Helper::getEmployeeResponseDto).getContent();
+        }
+
+        List<String> allowedFields = List.of(
+                "empNumber",
+                "firstName",
+                "lastName",
+                "officeEmail",
+                "personalEmail",
+                "reportingTo"
+        );
+
+        if (!allowedFields.contains(fieldName)) {
+            throw new IllegalArgumentException("Unsupported search field: " + fieldName);
+        }
+
+        Page<EmployeeResponseProjection> employeePage;
+
+        if (status == null || status.isEmpty())
+            employeePage = employeeRepository.findAllEmployeeWithoutStatus(fieldName, search.trim(), paging);
+        else
+            employeePage = employeeRepository.findAllEmployee(status, fieldName, search.trim(), paging);
+
+
+        return employeePage.map(Helper::getEmployeeResponseDto).getContent();
     }
 }

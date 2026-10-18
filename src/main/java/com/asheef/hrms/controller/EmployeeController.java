@@ -1,6 +1,7 @@
 package com.asheef.hrms.controller;
 
-import com.asheef.hrms.entity.Employee;
+import com.asheef.hrms.constants.Constant;
+import com.asheef.hrms.model.dto.EmployeeListRequestDto;
 import com.asheef.hrms.model.dto.EmployeeRequestDto;
 import com.asheef.hrms.model.dto.EmployeeUpdateDto;
 import com.asheef.hrms.model.response.EmployeeResponseDto;
@@ -10,6 +11,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -59,6 +62,12 @@ public class EmployeeController {
         return ResponseEntity.ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), msg));
     }
 
+    @GetMapping
+    public ResponseEntity<ResponseDto> getAllEmployees(@ModelAttribute EmployeeListRequestDto employeeListRequestDto) {
+        List<EmployeeResponseDto> employeeListResponseDto = employeeService.getAllEmployees(employeeListRequestDto);
+        return ResponseEntity
+                .ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), employeeListResponseDto, Constant.SUCCESS));
+    }
 
 
 }

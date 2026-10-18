@@ -1,5 +1,6 @@
 package com.asheef.hrms.commonhelper;
 
+import com.asheef.hrms.entity.Employee;
 import com.asheef.hrms.model.response.EmployeeResponseDto;
 import com.asheef.hrms.model.response.EmployeeResponseProjection;
 
@@ -35,4 +36,39 @@ public class Helper {
         return employeeResponseDto;
     }
 
+    public static EmployeeResponseDto getEmployeeResponseDto(Employee employee) {
+
+        EmployeeResponseDto dto = new EmployeeResponseDto();
+
+        dto.setId(employee.getId());
+        dto.setEmpNumber(employee.getEmpNumber());
+        dto.setFirstName(employee.getEmpFirstname());
+        dto.setLastName(employee.getEmpLastname());
+        dto.setOfficeEmail(employee.getOfficialEmail());
+        dto.setPersonalEmail(employee.getPersonalEmail());
+
+        dto.setDateOfJoin(
+                employee.getDateOfJoin() == null
+                        ? null
+                        : employee.getDateOfJoin().toString()
+        );
+
+        dto.setLocation(String.valueOf(employee.getLocation()));
+        dto.setSubLocation(String.valueOf(employee.getSubLocation()));
+
+        dto.setDateOfBirth(
+                employee.getDateOfBirth() == null
+                        ? null
+                        : employee.getDateOfBirth().toString()
+        );
+
+        dto.setFatherName(employee.getFatherName());
+        dto.setCountryCode(employee.getCountryCode());
+        dto.setContactNumber(employee.getContactNumber());
+        dto.setUserId(String.valueOf(employee.getUserId()));
+        dto.setCreated(employee.getCreated());
+        dto.setModified(employee.getModified());
+
+        return dto;
+    }
 }

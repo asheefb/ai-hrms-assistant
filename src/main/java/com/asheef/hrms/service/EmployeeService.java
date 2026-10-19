@@ -313,7 +313,7 @@ public class EmployeeService {
         return Constant.SUCCESS;
     }
 
-    public List<EmployeeResponseDto> getAllEmployees(EmployeeListRequestDto dto) {
+    public Page<EmployeeResponseDto> getAllEmployees(EmployeeListRequestDto dto) {
 
         List<Sort.Order> orders = SortUtil.getSortValues(dto.getSortBy());
 
@@ -347,7 +347,7 @@ public class EmployeeService {
                 employees = employeeRepository.findAllByStatusIn(status, paging);
             }
 
-            return employees.map(Helper::getEmployeeResponseDto).getContent();
+            return employees.map(Helper::getEmployeeResponseDto);
         }
 
         List<String> allowedFields = List.of(
@@ -371,6 +371,6 @@ public class EmployeeService {
             employeePage = employeeRepository.findAllEmployee(status, fieldName, search.trim(), paging);
 
 
-        return employeePage.map(Helper::getEmployeeResponseDto).getContent();
+        return employeePage.map(Helper::getEmployeeResponseDto);
     }
 }

@@ -5,7 +5,7 @@ public class Constant {
     public static final String SUCCESS = "Success";
 
     public static final String EMAIL_REGEX = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-    public static final String NO_LOGIN_USERNAME = "nologin";
+    public static final String NO_LOGIN = "nologin";
     public static final String INVALID_EMPLOYEE = "Invalid employee ID: ";
     public static final String INVALID_STATUS = "Invalid status ID: ";
     public static final String INVALID_DESIGNATION = "Invalid designation ID: ";

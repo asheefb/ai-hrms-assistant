@@ -5,9 +5,11 @@ import com.asheef.hrms.model.dto.EmployeeListRequestDto;
 import com.asheef.hrms.model.dto.EmployeeRequestDto;
 import com.asheef.hrms.model.dto.EmployeeUpdateDto;
 import com.asheef.hrms.model.response.EmployeeResponseDto;
+import com.asheef.hrms.model.response.PageResponse;
 import com.asheef.hrms.service.EmployeeService;
 import com.asheef.hrms.utils.ResponseDto;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -64,9 +66,11 @@ public class EmployeeController {
 
     @GetMapping
     public ResponseEntity<ResponseDto> getAllEmployees(@ModelAttribute EmployeeListRequestDto employeeListRequestDto) {
-        List<EmployeeResponseDto> employeeListResponseDto = employeeService.getAllEmployees(employeeListRequestDto);
+        Page<EmployeeResponseDto> employeeListResponseDto = employeeService.getAllEmployees(employeeListRequestDto);
+
+        PageResponse<EmployeeResponseDto> pageResponse = PageResponse.from(employeeListResponseDto);
         return ResponseEntity
-                .ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), employeeListResponseDto, Constant.SUCCESS));
+                .ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), pageResponse, Constant.SUCCESS));
     }
 
 

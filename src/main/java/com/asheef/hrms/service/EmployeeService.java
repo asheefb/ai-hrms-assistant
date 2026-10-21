@@ -22,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -108,8 +109,8 @@ public class EmployeeService {
             employee.setContactNumber(employeeDto.getContactNumber());
         }
 
-        Integer userId = userRepository.findByUsername(Constant.NO_LOGIN_USERNAME)
-                .orElseThrow(() -> new IllegalArgumentException(Constant.USER_NAME + Constant.NO_LOGIN_USERNAME + Constant.NOT_FOUND)).getId();
+        Integer userId = userRepository.findByLogin(Constant.NO_LOGIN)
+                .orElseThrow(() -> new IllegalArgumentException(Constant.USER_NAME + Constant.NO_LOGIN + Constant.NOT_FOUND)).getId();
 
         employee.setUserId(userId);
         employee.setCreatedBy(1);
@@ -302,8 +303,8 @@ public class EmployeeService {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new IllegalArgumentException(Constant.EMPLOYEE_NOT_FOUND));
 
-        Integer noLoginUserId = userRepository.findByUsername(Constant.NO_LOGIN_USERNAME)
-                .orElseThrow(() -> new IllegalArgumentException(Constant.USER_NAME + Constant.NO_LOGIN_USERNAME + Constant.NOT_FOUND)).getId();
+        Integer noLoginUserId = userRepository.findByLogin(Constant.NO_LOGIN)
+                .orElseThrow(() -> new IllegalArgumentException(Constant.USER_NAME + Constant.NO_LOGIN + Constant.NOT_FOUND)).getId();
 
         employee.setUserId(noLoginUserId);
         employee.setModifiedBy(1);

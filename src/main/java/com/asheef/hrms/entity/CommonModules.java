@@ -14,12 +14,13 @@ public class CommonModules {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(columnDefinition = "MEDIUMINT")
     private Integer id;
 
     @Column(nullable = false)
     private Integer moduleId;
 
-    @Column(columnDefinition = "char(10) not null")
+    @Column(name = "module_code", columnDefinition = "char(10) not null")
     private String moduleCode;
 
     @Column(columnDefinition = "varchar(200) not null")
@@ -33,7 +34,7 @@ public class CommonModules {
     private Integer modifiedBy;
 
     @CreationTimestamp
-    @Column(updatable = false ,columnDefinition = "timestamp default current_timestamp")
+    @Column(updatable = false, columnDefinition = "timestamp default current_timestamp")
     private LocalDateTime created;
 
     @UpdateTimestamp

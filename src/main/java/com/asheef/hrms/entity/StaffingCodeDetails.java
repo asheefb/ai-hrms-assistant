@@ -56,11 +56,13 @@ public class StaffingCodeDetails {
     @Column(name = "membership_required", columnDefinition = "TINYINT DEFAULT 0")
     private Integer membershipRequired = 0;
 
-    @Column(name = "created_by", columnDefinition = "MEDIUMINT UNSIGNED")
-    private Integer createdBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by",columnDefinition = "MEDIUMINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_staffing_created_by"))
+    private User createdBy;
 
-    @Column(name = "modified_by", columnDefinition = "MEDIUMINT UNSIGNED")
-    private Integer modifiedBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "modified_by",columnDefinition = "MEDIUMINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_staffing_modified_by"))
+    private User modifiedBy;
 
     @CreationTimestamp
     @Column(name = "created", updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

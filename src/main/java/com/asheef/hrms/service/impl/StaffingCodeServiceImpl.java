@@ -122,13 +122,26 @@ public class StaffingCodeServiceImpl implements StaffingCodeService {
 
         staffingCodeDetails.setModifiedBy(modifiedBy);
         staffingCodeRepository.save(staffingCodeDetails);
-        
+
         return Constant.SUCCESS;
     }
 
     @Override
     public String activateInactivateStaffingCode(Integer id, String isActive) {
-        return "";
+
+        StaffingCodeDetails staffingCodeDetails = staffingCodeRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException(Constant.STAFFING_CODE + Constant.NOT_FOUND));
+
+        if (staffingCodeDetails.getIsActive().equals(Integer.parseInt(isActive))) {
+            return Constant.STAFFING_CODE + " is already " + (isActive.equals("1") ? Constant.ACTIVATED : Constant.INACTIVATED);
+        }
+
+        staffingCodeDetails.setIsActive(isActive.equals("1") ? 1 : 0);
+        staffingCodeDetails.setModifiedBy(userRepository.findById(1)
+                .orElseThrow(() -> new NoSuchElementException(Constant.NOT_FOUND)));
+
+        staffingCodeRepository.save(staffingCodeDetails);
+        return Constant.STAFFING_CODE + " " + (isActive.equals("1") ? Constant.ACTIVATED : Constant.INACTIVATED);
     }
 
     @Override

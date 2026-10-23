@@ -28,4 +28,7 @@ public class Constant {
     public static final String USER_ID_REQUIRED = "User ID is required";
     public static final String INVALID_USER_ID = "Invalid user ID: ";
     public static final String ALREADY_LINKED_USER = "User is already linked to another employee.";
+    public static final String UNIT_HEAD = "Unit Head";
+    public static final String HR_MANAGER = "Hr Manager";
+    public static final String DIR_APPROVER = "Dir Approver";
 }

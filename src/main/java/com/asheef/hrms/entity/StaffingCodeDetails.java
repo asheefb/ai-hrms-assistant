@@ -13,8 +13,9 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @Entity
-@Table(name = "staffingcode_details", indexes = {
-        @Index(name = "Idx_manpower_status_id", columnList = "status_id")})
+@Table(name = "staffingcode_details", uniqueConstraints = {
+        @UniqueConstraint(name = "UQ_staffing_code", columnNames = {"staffing_code"})},
+        indexes = {@Index(name = "Idx_manpower_status_id", columnList = "status_id")})
 public class StaffingCodeDetails {
 
     @Id
@@ -48,7 +49,7 @@ public class StaffingCodeDetails {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "status_id", referencedColumnName = "id", nullable = false, columnDefinition = "MEDIUMINT")
-    private CommonModules status;
+    private HrmModules status;
 
     @Column(name = "is_active", nullable = false, columnDefinition = "MEDIUMINT DEFAULT 1")
     private Integer isActive = 1;
@@ -57,11 +58,11 @@ public class StaffingCodeDetails {
     private Integer membershipRequired = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by",columnDefinition = "MEDIUMINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_staffing_created_by"))
+    @JoinColumn(name = "created_by", columnDefinition = "MEDIUMINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_staffing_created_by"))
     private User createdBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "modified_by",columnDefinition = "MEDIUMINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_staffing_modified_by"))
+    @JoinColumn(name = "modified_by", columnDefinition = "MEDIUMINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_staffing_modified_by"))
     private User modifiedBy;
 
     @CreationTimestamp

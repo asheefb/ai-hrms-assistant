@@ -6,6 +6,8 @@ import com.asheef.hrms.model.dto.StaffingCodeUpdateDto;
 import com.asheef.hrms.service.StaffingCodeService;
 import com.asheef.hrms.utils.ResponseDto;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +23,7 @@ public class StaffingCodeController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseDto> createStaffingCode(@RequestBody StaffingCodeDto staffingCodeDto) {
+    public ResponseEntity<ResponseDto> createStaffingCode(@RequestBody @Valid StaffingCodeDto staffingCodeDto) {
 
         String msg = staffingCodeService.createStaffingCode(staffingCodeDto);
         return ResponseEntity.status(HttpStatus.CREATED)

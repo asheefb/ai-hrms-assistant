@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 
 @RestControllerAdvice
@@ -132,6 +133,13 @@ public class GlobalException {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 new ResponseDto(Boolean.FALSE, HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         e.getMostSpecificCause().getMessage())
+        );
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<ResponseDto> handleNoSuchElementException(NoSuchElementException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ResponseDto(Boolean.FALSE, HttpStatus.NOT_FOUND.value(), e.getMessage())
         );
     }
 

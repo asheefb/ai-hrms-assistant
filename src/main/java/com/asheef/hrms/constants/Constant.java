@@ -31,4 +31,5 @@ public class Constant {
     public static final String UNIT_HEAD = "Unit Head";
     public static final String HR_MANAGER = "Hr Manager";
     public static final String DIR_APPROVER = "Dir Approver";
+    public static final String STAFFING_CODE = "Staffing Code";
 }

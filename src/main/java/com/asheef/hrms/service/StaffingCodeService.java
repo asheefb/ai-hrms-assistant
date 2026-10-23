@@ -7,9 +7,9 @@ public interface StaffingCodeService {
 
     String createStaffingCode(StaffingCodeDto staffingCodeDto);
 
-    String updateStaffingCode(String id, StaffingCodeUpdateDto staffingCodeDto);
+    String updateStaffingCode(Integer id, StaffingCodeUpdateDto staffingCodeDto);
 
-    String activateInactivateStaffingCode(String id, String isActive);
+    String activateInactivateStaffingCode(Integer id, String isActive);
 
-    String approveStaffingCode(String id, String status);
+    String approveStaffingCode(Integer id, String status);
 }

@@ -73,17 +73,66 @@ public class StaffingCodeServiceImpl implements StaffingCodeService {
     }
 
     @Override
-    public String updateStaffingCode(String id, StaffingCodeUpdateDto staffingCodeDto) {
+    public String updateStaffingCode(Integer id, StaffingCodeUpdateDto dto) {
+
+        StaffingCodeDetails staffingCodeDetails = staffingCodeRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException(Constant.STAFFING_CODE + Constant.NOT_FOUND));
+
+        if (dto.getManpowerCount() != null && staffingCodeDetails.getManpowerCount() != dto.getManpowerCount()) {
+            staffingCodeDetails.setManpowerCount(dto.getManpowerCount());
+        }
+
+        if (dto.getBudgetedCtc() != null && staffingCodeDetails.getBudgetedCtc() != dto.getBudgetedCtc()) {
+            staffingCodeDetails.setBudgetedCtc(dto.getBudgetedCtc());
+        }
+
+        if (dto.getStaffingCode() != null && !dto.getStaffingCode().isEmpty() && !staffingCodeDetails.getStaffingCode().equals(dto.getStaffingCode())) {
+            staffingCodeDetails.setStaffingCode(dto.getStaffingCode());
+        }
+
+        if (dto.getUnitHead() != null && !staffingCodeDetails.getUnitHead().getId().equals(dto.getUnitHead())) {
+            User unitHead = userRepository.findById(dto.getUnitHead())
+                    .orElseThrow(() -> new NoSuchElementException(Constant.UNIT_HEAD + Constant.NOT_FOUND));
+            staffingCodeDetails.setUnitHead(unitHead);
+        }
+
+        if (dto.getHrManager() != null && !staffingCodeDetails.getHrManager().getId().equals(dto.getHrManager())) {
+            User hrManager = userRepository.findById(dto.getHrManager())
+                    .orElseThrow(() -> new NoSuchElementException(Constant.HR_MANAGER + Constant.NOT_FOUND));
+            staffingCodeDetails.setHrManager(hrManager);
+        }
+
+
+        if (dto.getDirApprover() != null && !staffingCodeDetails.getDirApprover().getId().equals(dto.getDirApprover())) {
+            User dirApprover = userRepository.findById(dto.getDirApprover())
+                    .orElseThrow(() -> new NoSuchElementException(Constant.DIR_APPROVER + Constant.NOT_FOUND));
+            staffingCodeDetails.setDirApprover(dirApprover);
+        }
+
+        if (dto.getNotes() != null && !dto.getNotes().isEmpty() && !staffingCodeDetails.getNotes().equals(dto.getNotes())) {
+            staffingCodeDetails.setNotes(dto.getNotes());
+        }
+
+        if (dto.getMembershipRequired() != null && !staffingCodeDetails.getMembershipRequired().equals(dto.getMembershipRequired())) {
+            staffingCodeDetails.setMembershipRequired(dto.getMembershipRequired());
+        }
+
+        User modifiedBy = userRepository.findById(1)
+                .orElseThrow(() -> new NoSuchElementException(Constant.NOT_FOUND));
+
+        staffingCodeDetails.setModifiedBy(modifiedBy);
+        staffingCodeRepository.save(staffingCodeDetails);
+        
+        return Constant.SUCCESS;
+    }
+
+    @Override
+    public String activateInactivateStaffingCode(Integer id, String isActive) {
         return "";
     }
 
     @Override
-    public String activateInactivateStaffingCode(String id, String isActive) {
-        return "";
-    }
-
-    @Override
-    public String approveStaffingCode(String id, String status) {
+    public String approveStaffingCode(Integer id, String status) {
         return "";
     }
 }

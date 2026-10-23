@@ -32,21 +32,21 @@ public class StaffingCodeController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDto> updateStaffingCode(@PathVariable String id, @RequestBody StaffingCodeUpdateDto staffingCodeDto) {
-        String msg = staffingCodeService.updateStaffingCode(id, staffingCodeDto);
+        String msg = staffingCodeService.updateStaffingCode(Integer.valueOf(id), staffingCodeDto);
         return ResponseEntity.
                 ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), msg));
     }
 
     @PatchMapping("/activate-inactivate/{id}")
     public ResponseEntity<ResponseDto> activateInactivateStaffingCode(@PathVariable String id, @RequestParam("isActive") String isActive) {
-        String msg = staffingCodeService.activateInactivateStaffingCode(id, isActive);
+        String msg = staffingCodeService.activateInactivateStaffingCode(Integer.valueOf(id), isActive);
         return ResponseEntity.
                 ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), msg));
     }
 
     @PatchMapping("/approval/{id}")
     public ResponseEntity<ResponseDto> approveStaffingCode(@PathVariable String id, @RequestParam("status") String status) {
-        String msg = staffingCodeService.approveStaffingCode(id, status);
+        String msg = staffingCodeService.approveStaffingCode(Integer.valueOf(id), status);
         return ResponseEntity.
                 ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), msg));
     }

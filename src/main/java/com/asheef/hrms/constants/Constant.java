@@ -34,4 +34,6 @@ public class Constant {
     public static final String STAFFING_CODE = "Staffing Code";
     public static final String ACTIVATED = "Activated";
     public static final String INACTIVATED = "InActivated";
+    public static final String INVALID = "Invalid";
+    public static final String STATUS = "Status";
 }

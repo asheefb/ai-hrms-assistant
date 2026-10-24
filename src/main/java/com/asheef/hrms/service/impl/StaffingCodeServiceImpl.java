@@ -7,10 +7,12 @@ import com.asheef.hrms.entity.StaffingCodeDetails;
 import com.asheef.hrms.entity.User;
 import com.asheef.hrms.model.dto.StaffingCodeDto;
 import com.asheef.hrms.model.dto.StaffingCodeUpdateDto;
+import com.asheef.hrms.model.response.HrmModulesResponseProjection;
 import com.asheef.hrms.repo.HrmModulesRepository;
 import com.asheef.hrms.repo.StaffingCodeRepository;
 import com.asheef.hrms.repo.UserRepository;
 import com.asheef.hrms.service.StaffingCodeService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
@@ -146,6 +148,15 @@ public class StaffingCodeServiceImpl implements StaffingCodeService {
 
     @Override
     public String approveStaffingCode(Integer id, String status) {
-        return "";
+        StaffingCodeDetails staffingCodeDetails = staffingCodeRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException(Constant.STAFFING_CODE + Constant.NOT_FOUND));
+
+        HrmModulesResponseProjection projection = hrmModulesRepository.findByIdAndCtrlModuleCode(Integer.parseInt(status), ControlModules.STAFFING_STATUS)
+                .orElseThrow(() -> new NoSuchElementException(Constant.INVALID + Constant.STATUS));
+
+        HrmModules stcStatus = new HrmModules();
+        BeanUtils.copyProperties(projection, stcStatus);
+        staffingCodeDetails.setStatus(stcStatus);
+        return Constant.STAFFING_CODE + " " + projection.getDescription() + " " + Constant.SUCCESS;
     }
 }

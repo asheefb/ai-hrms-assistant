@@ -1,5 +1,6 @@
 package com.asheef.hrms.service.impl;
 
+import com.asheef.hrms.constants.ChildModules;
 import com.asheef.hrms.constants.Constant;
 import com.asheef.hrms.constants.ControlModules;
 import com.asheef.hrms.entity.HrmModules;
@@ -12,10 +13,13 @@ import com.asheef.hrms.repo.HrmModulesRepository;
 import com.asheef.hrms.repo.StaffingCodeRepository;
 import com.asheef.hrms.repo.UserRepository;
 import com.asheef.hrms.service.StaffingCodeService;
+import com.asheef.hrms.service.UserService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 @Service
 public class StaffingCodeServiceImpl implements StaffingCodeService {
@@ -26,11 +30,14 @@ public class StaffingCodeServiceImpl implements StaffingCodeService {
 
     private final HrmModulesRepository hrmModulesRepository;
 
+    private final UserService userService;
 
-    public StaffingCodeServiceImpl(StaffingCodeRepository staffingCodeRepository, UserRepository userRepository, HrmModulesRepository hrmModulesRepository) {
+
+    public StaffingCodeServiceImpl(StaffingCodeRepository staffingCodeRepository, UserRepository userRepository, HrmModulesRepository hrmModulesRepository, UserService userService) {
         this.staffingCodeRepository = staffingCodeRepository;
         this.userRepository = userRepository;
         this.hrmModulesRepository = hrmModulesRepository;
+        this.userService = userService;
     }
 
 
@@ -58,7 +65,7 @@ public class StaffingCodeServiceImpl implements StaffingCodeService {
 
         staffingCodeDetails.setNotes(dto.getNotes());
 
-        HrmModules status = hrmModulesRepository.findChildByModuleCodes(ControlModules.STAFFING_STATUS, ControlModules.STAFFING_STATUS_IN_PREPARATION)
+        HrmModules status = hrmModulesRepository.findChildByModuleCodes(ControlModules.STAFFING_STATUS, ChildModules.STAFFING_STATUS_IN_PREPARATION)
                 .orElseThrow(() -> new NoSuchElementException("Staffing status InPreparation Not Configured."));
 
         staffingCodeDetails.setStatus(status);
@@ -147,6 +154,7 @@ public class StaffingCodeServiceImpl implements StaffingCodeService {
     }
 
     @Override
+    @Transactional(rollbackOn = Exception.class)
     public String approveStaffingCode(Integer id, String status) {
         StaffingCodeDetails staffingCodeDetails = staffingCodeRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException(Constant.STAFFING_CODE + Constant.NOT_FOUND));
@@ -157,6 +165,16 @@ public class StaffingCodeServiceImpl implements StaffingCodeService {
         HrmModules stcStatus = new HrmModules();
         BeanUtils.copyProperties(projection, stcStatus);
         staffingCodeDetails.setStatus(stcStatus);
+
+        Integer approvedSt = hrmModulesRepository.findChildByModuleCodes(ControlModules.STAFFING_STATUS, ChildModules.STAFFING_STATUS_APPROVED)
+                .orElseThrow(() -> new NoSuchElementException(Constant.APPROVED + " " + Constant.STATUS + Constant.NOT_FOUND)).getId();
+
+        if (Objects.equals(stcStatus.getId(), approvedSt))
+            userService.createUser(staffingCodeDetails);
+
+        staffingCodeRepository.save(staffingCodeDetails);
+
+
         return Constant.STAFFING_CODE + " " + projection.getDescription() + " " + Constant.SUCCESS;
     }
 }

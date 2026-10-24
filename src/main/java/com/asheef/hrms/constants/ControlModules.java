@@ -9,7 +9,5 @@ public class ControlModules {
     public static final String DESIGNATION = "CT05";
     public static final String EMPLOYEE_TYPE = "CT06";
     public static final String STAFFING_STATUS = "CT07";
- 
-    //child Modules
-    public static final String STAFFING_STATUS_IN_PREPARATION = "SC01";
+
 }

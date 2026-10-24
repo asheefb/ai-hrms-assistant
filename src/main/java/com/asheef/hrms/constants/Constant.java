@@ -36,4 +36,5 @@ public class Constant {
     public static final String INACTIVATED = "InActivated";
     public static final String INVALID = "Invalid";
     public static final String STATUS = "Status";
+    public static final String APPROVED = "Approved";
 }

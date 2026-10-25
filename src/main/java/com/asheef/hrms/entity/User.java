@@ -54,10 +54,10 @@ public class User {
     @Column(name = "phone_home", length = 155)
     private String phoneHome;
 
-    @Column(name = "country_code", length = 5)
+    @Column(name = "country_code", nullable = false,length = 5)
     private String countryCode;
 
-    @Column(name = "mobile", length = 155)
+    @Column(name = "mobile", nullable = false, length = 155)
     private String mobile;
 
     @Column(name = "fax", length = 155)

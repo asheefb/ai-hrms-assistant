@@ -1,5 +1,7 @@
 package com.asheef.hrms.constants;
 
+import org.jspecify.annotations.Nullable;
+
 public class Constant {
 
     public static final String SUCCESS = "Success";
@@ -37,4 +39,5 @@ public class Constant {
     public static final String INVALID = "Invalid";
     public static final String STATUS = "Status";
     public static final String APPROVED = "Approved";
+    public static final String DEFAULT_PASSWORD = "ChangeMe++" ;
 }

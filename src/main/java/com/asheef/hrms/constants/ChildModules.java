@@ -5,4 +5,6 @@ public class ChildModules {
     public static final String STAFFING_STATUS_APPROVED = "SC05";
 
     public static final String USER_EMPLOYEE = "UT01";
+
+    public static final String DISABLED_USER = "UP05";
 }

@@ -10,5 +10,7 @@ public class ControlModules {
     public static final String EMPLOYEE_TYPE = "CT06";
     public static final String STAFFING_STATUS = "CT07";
 
+
+    public static final String USER_TYPE = "AT01";
     public static final String USER_PROFIL = "AT02";
 }

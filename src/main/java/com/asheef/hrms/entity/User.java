@@ -54,7 +54,7 @@ public class User {
     @Column(name = "phone_home", length = 155)
     private String phoneHome;
 
-    @Column(name = "country_code", nullable = false,length = 5)
+    @Column(name = "country_code", nullable = false, length = 5)
     private String countryCode;
 
     @Column(name = "mobile", nullable = false, length = 155)
@@ -91,11 +91,13 @@ public class User {
     @Column(name = "reference_id")
     private Integer referenceId;
 
-    @Column(name = "created_by", nullable = false)
-    private Integer createdBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "created_by", columnDefinition = "MEDIUMINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_staffing_created_by"))
+    private User createdBy;
 
-    @Column(name = "modified_by", nullable = false)
-    private Integer modifiedBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "modified_by", columnDefinition = "MEDIUMINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_staffing_modified_by"))
+    private User modifiedBy;
 
     @CreationTimestamp
     @Column(name = "created", updatable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

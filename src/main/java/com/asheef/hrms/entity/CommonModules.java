@@ -9,7 +9,9 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(indexes = {@Index(name = "idx_module_id_code", columnList = "module_id, module_code")})
+@Table(indexes = {@Index(name = "idx_module_id_code", columnList = "module_id, module_code")},
+        uniqueConstraints = {@UniqueConstraint(name = "uk_common_modules_ref_module", columnNames = "ref_module")}
+)
 public class CommonModules {
 
     @Id
@@ -25,6 +27,9 @@ public class CommonModules {
 
     @Column(columnDefinition = "varchar(200) not null")
     private String description;
+
+    @Column(name = "ref_module", columnDefinition = "varchar(50) default null")
+    private String refModule;
 
     @Column(nullable = false, columnDefinition = "tinyint default 1")
     private Boolean isActive;

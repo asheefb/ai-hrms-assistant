@@ -64,7 +64,7 @@ public class User {
     private String fax;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "profil", referencedColumnName = "module_code", nullable = false, columnDefinition = "char(10) not null")
+    @JoinColumn(name = "profil", referencedColumnName = "ref_module", nullable = false, columnDefinition = "varchar(50)", foreignKey = @ForeignKey(name = "fk_users_profil"))
     private CommonModules profil;
 
     @Column(name = "change_pwd", nullable = false, length = 1)
@@ -92,11 +92,11 @@ public class User {
     private Integer referenceId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "created_by", columnDefinition = "MEDIUMINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_staffing_created_by"))
+    @JoinColumn(name = "created_by", columnDefinition = "MEDIUMINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_user_created_by"))
     private User createdBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "modified_by", columnDefinition = "MEDIUMINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_staffing_modified_by"))
+    @JoinColumn(name = "modified_by", columnDefinition = "MEDIUMINT UNSIGNED", foreignKey = @ForeignKey(name = "fk_user_modified_by"))
     private User modifiedBy;
 
     @CreationTimestamp

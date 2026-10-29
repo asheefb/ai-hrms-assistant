@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/staffing-codes")
+@RequestMapping("/api/staffing-codes")
 public class StaffingCodeController {
 
     public final StaffingCodeService staffingCodeService;
@@ -44,7 +44,7 @@ public class StaffingCodeController {
                 ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), msg));
     }
 
-    @PatchMapping("/approval/{id}")
+    @PatchMapping("/approve/{id}")
     public ResponseEntity<ResponseDto> approveStaffingCode(@PathVariable String id, @RequestParam("status") String status) {
         String msg = staffingCodeService.approveStaffingCode(Integer.valueOf(id), status);
         return ResponseEntity.

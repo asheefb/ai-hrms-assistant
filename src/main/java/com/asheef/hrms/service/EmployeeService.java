@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -270,6 +271,7 @@ public class EmployeeService {
         return Constant.SUCCESS;
     }
 
+    @Transactional
     public String linkUserToEmployee(Integer employeeId, Integer userId) {
 
         if (employeeId == null)
@@ -288,9 +290,28 @@ public class EmployeeService {
             throw new IllegalArgumentException(Constant.ALREADY_LINKED_USER);
         }
 
+        user.setFirstname(employee.getEmpFirstname());
+        user.setLastname(employee.getEmpLastname());
+        String fullName = ((employee.getEmpFirstname() == null ? "" : employee.getEmpFirstname()) + " "
+                + (employee.getEmpLastname() == null ? "" : employee.getEmpLastname())).trim();
+        if (!fullName.isEmpty()) {
+            user.setName(fullName);
+        }
+        user.setEmailWork(employee.getOfficialEmail());
+        user.setEmailHome(employee.getPersonalEmail());
+        if (employee.getCountryCode() != null) {
+            user.setCountryCode(employee.getCountryCode());
+        }
+        if (employee.getContactNumber() != null) {
+            user.setMobile(employee.getContactNumber());
+        }
+        user.setDob(employee.getDateOfBirth());
+        user.setIsEmployee("1");
+
         employee.setUserId(user.getId());
         employee.setModifiedBy(1);
 
+        userRepository.save(user);
         employeeRepository.save(employee);
 
         return Constant.SUCCESS;

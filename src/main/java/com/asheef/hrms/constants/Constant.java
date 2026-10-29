@@ -1,7 +1,5 @@
 package com.asheef.hrms.constants;
 
-import org.jspecify.annotations.Nullable;
-
 public class Constant {
 
     public static final String SUCCESS = "Success";

@@ -16,4 +16,12 @@ public interface CommonModulesRepository extends JpaRepository<CommonModules, In
         where m1.module_code = :parentModuleCode and m1.is_active = 1 AND m2.id is not null
     """, nativeQuery = true)
     public Optional<CommonModules> findChildByModuleCodes(String parentModuleCode, String childModuleCode);
+
+    @Query(value = """
+        select child.* from common_modules child
+        join common_modules parent on parent.id = child.module_id
+        where child.ref_module = :refModule and child.is_active = 1
+          and parent.module_code = :parentModuleCode and parent.is_active = 1
+    """, nativeQuery = true)
+    public Optional<CommonModules> findActiveChildByRefModuleAndParentModuleCode(String refModule, String parentModuleCode);
 }

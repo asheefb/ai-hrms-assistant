@@ -11,7 +11,8 @@ public interface StaffingCodeEmployeeMapRepository extends JpaRepository<Staffin
 
     boolean existsByStaffingCodeDetails_IdAndIsActive(Integer staffingCodeId, Integer isActive);
 
-    Optional<StaffingCodeEmployeeMap> findFirstByEmployee_IdAndIsActiveOrderByIdDesc(Integer employeeId, Integer isActive);
+    Optional<StaffingCodeEmployeeMap> findByEmployee_IdAndIsActive(Integer employeeId, Integer isActive);
 
-    Optional<StaffingCodeEmployeeMap> findFirstByStaffingCodeDetails_IdOrderByIdDesc(Integer staffingCodeId);
+    Optional<StaffingCodeEmployeeMap> findByStaffingCodeDetails_IdAndEmployee_IdAndIsActive(
+            Integer staffingCodeId, Integer employeeId, Integer isActive);
 }

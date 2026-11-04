@@ -40,22 +40,9 @@ public class UserServiceImpl implements UserService {
         Optional<User> isUserExist = userRepository.findByType_ModuleCodeAndReferenceId(ChildModules.USER_EMPLOYEE, staffingCodeDetails.getId());
 
         if (isUserExist.isEmpty()) {
-            String staffingCode = staffingCodeDetails.getStaffingCode();
-
             User user = new User();
-            user.setLogin(staffingCode);
             user.setPassword(passwordEncoder.encode(Constant.DEFAULT_PASSWORD));
-            user.setName(staffingCode);
-            user.setFirstname(staffingCode);
-            user.setLastname(staffingCode);
-            user.setCountryCode("00");
-            user.setMobile(staffingCode);
-
-            //profil
-            CommonModules disabledUserModule = commonModulesRepository.findChildByModuleCodes(ControlModules.USER_PROFIL, ChildModules.DISABLED_USER)
-                    .orElseThrow(() -> new RuntimeException("Disabled User module not found"));
-
-            user.setProfil(disabledUserModule);
+            resetUserToStaffingCode(user, staffingCodeDetails);
 
             CommonModules userTypeModule = commonModulesRepository.findChildByModuleCodes(ControlModules.USER_TYPE, ChildModules.USER_EMPLOYEE)
                     .orElseThrow(() -> new RuntimeException("Staffing Status module not found"));
@@ -67,13 +54,50 @@ public class UserServiceImpl implements UserService {
             user.setModifiedBy(createdBy);
 
             User savedUser = userRepository.save(user);
-            Integer referenceId = savedUser.getId();
-
-            savedUser.setReferenceId(referenceId);
+            savedUser.setReferenceId(staffingCodeDetails.getId());
             userRepository.save(savedUser);
 
         } else
             throw new RuntimeException("User Already created for this Staffing Code");
+    }
+
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public void activateUserForEmployee(User user, StaffingCodeDetails staffingCodeDetails) {
+        String profileCode = Integer.valueOf(1).equals(staffingCodeDetails.getMembershipRequired())
+                ? ChildModules.WEB_MOBILE_USER
+                : ChildModules.MOBILE_ONLY_USER;
+        CommonModules profile = commonModulesRepository.findChildByModuleCodes(ControlModules.USER_PROFIL, profileCode)
+                .orElseThrow(() -> new NoSuchElementException("Employee user profile not found: " + profileCode));
+
+        user.setProfil(profile);
+        user.setReferenceId(staffingCodeDetails.getId());
+    }
+
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public void resetUserToStaffingCode(User user, StaffingCodeDetails staffingCodeDetails) {
+        String staffingCode = staffingCodeDetails.getStaffingCode();
+        CommonModules disabledUserProfile = commonModulesRepository.findChildByModuleCodes(ControlModules.USER_PROFIL, ChildModules.DISABLED_USER)
+                .orElseThrow(() -> new NoSuchElementException("Disabled User module not found"));
+        User modifiedBy = userRepository.findById(1)
+                .orElseThrow(() -> new NoSuchElementException(Constant.NOT_FOUND));
+
+        user.setLogin(staffingCode);
+        user.setName(staffingCode);
+        user.setFirstname(staffingCode);
+        user.setLastname(staffingCode);
+        user.setEmailWork(null);
+        user.setEmailHome(null);
+        user.setPhoneWork(null);
+        user.setPhoneHome(null);
+        user.setCountryCode("00");
+        user.setMobile(staffingCode);
+        user.setDob(null);
+        user.setProfil(disabledUserProfile);
+        user.setReferenceId(staffingCodeDetails.getId());
+        user.setIsEmployee("0");
+        user.setModifiedBy(modifiedBy);
     }
 
     @Override

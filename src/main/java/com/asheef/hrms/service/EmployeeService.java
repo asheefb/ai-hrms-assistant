@@ -1,10 +1,13 @@
 package com.asheef.hrms.service;
 
 import com.asheef.hrms.commonhelper.Helper;
+import com.asheef.hrms.constants.ChildModules;
 import com.asheef.hrms.constants.Constant;
 import com.asheef.hrms.constants.ControlModules;
 import com.asheef.hrms.entity.Employee;
 import com.asheef.hrms.entity.MobileCountryCodes;
+import com.asheef.hrms.entity.StaffingCodeDetails;
+import com.asheef.hrms.entity.StaffingCodeEmployeeMap;
 import com.asheef.hrms.entity.User;
 import com.asheef.hrms.model.dto.EmployeeListRequestDto;
 import com.asheef.hrms.model.dto.EmployeeRequestDto;
@@ -14,6 +17,8 @@ import com.asheef.hrms.model.response.EmployeeResponseProjection;
 import com.asheef.hrms.repo.EmployeeRepository;
 import com.asheef.hrms.repo.HrmModulesRepository;
 import com.asheef.hrms.repo.MobileCountryCodesRepository;
+import com.asheef.hrms.repo.StaffingCodeEmployeeMapRepository;
+import com.asheef.hrms.repo.StaffingCodeRepository;
 import com.asheef.hrms.repo.UserRepository;
 import com.asheef.hrms.utils.SortUtil;
 import org.springframework.data.domain.Page;
@@ -37,11 +42,26 @@ public class EmployeeService {
 
     private final UserRepository userRepository;
 
-    public EmployeeService(EmployeeRepository employeeRepository, MobileCountryCodesRepository mobileCountryCodesRepository, HrmModulesRepository hrmModulesRepository, UserRepository userRepository) {
+    private final StaffingCodeEmployeeMapRepository staffingCodeEmployeeMapRepository;
+
+    private final StaffingCodeRepository staffingCodeRepository;
+
+    private final UserService userService;
+
+    public EmployeeService(EmployeeRepository employeeRepository,
+                           MobileCountryCodesRepository mobileCountryCodesRepository,
+                           HrmModulesRepository hrmModulesRepository,
+                           UserRepository userRepository,
+                           StaffingCodeEmployeeMapRepository staffingCodeEmployeeMapRepository,
+                           StaffingCodeRepository staffingCodeRepository,
+                           UserService userService) {
         this.employeeRepository = employeeRepository;
         this.mobileCountryCodesRepository = mobileCountryCodesRepository;
         this.hrmModulesRepository = hrmModulesRepository;
         this.userRepository = userRepository;
+        this.staffingCodeEmployeeMapRepository = staffingCodeEmployeeMapRepository;
+        this.staffingCodeRepository = staffingCodeRepository;
+        this.userService = userService;
     }
 
 
@@ -290,6 +310,12 @@ public class EmployeeService {
             throw new IllegalArgumentException(Constant.ALREADY_LINKED_USER);
         }
 
+        StaffingCodeDetails staffingCode = staffingCodeEmployeeMapRepository
+                .findByEmployee_IdAndIsActive(employeeId, 1)
+                .map(StaffingCodeEmployeeMap::getStaffingCodeDetails)
+                .orElseGet(() -> findStaffingCodeForUser(user));
+        userService.activateUserForEmployee(user, staffingCode);
+
         user.setFirstname(employee.getEmpFirstname());
         user.setLastname(employee.getEmpLastname());
         String fullName = ((employee.getEmpFirstname() == null ? "" : employee.getEmpFirstname()) + " "
@@ -317,6 +343,7 @@ public class EmployeeService {
         return Constant.SUCCESS;
     }
 
+    @Transactional
     public String unlinkUserFromEmployee(Integer employeeId) {
 
         if (employeeId == null)
@@ -327,12 +354,43 @@ public class EmployeeService {
         Integer noLoginUserId = userRepository.findByLogin(Constant.NO_LOGIN)
                 .orElseThrow(() -> new IllegalArgumentException(Constant.USER_NAME + Constant.NO_LOGIN + Constant.NOT_FOUND)).getId();
 
+        var activeMapping = staffingCodeEmployeeMapRepository
+                .findByEmployee_IdAndIsActive(employeeId, 1);
+        if (activeMapping.isPresent()) {
+            StaffingCodeEmployeeMap mapping = activeMapping.get();
+            mapping.setIsActive(0);
+            mapping.setModifiedBy(userRepository.findById(1)
+                    .orElseThrow(() -> new IllegalArgumentException(Constant.NOT_FOUND)));
+            staffingCodeEmployeeMapRepository.save(mapping);
+        }
+
+        if (!noLoginUserId.equals(employee.getUserId())) {
+            User linkedUser = userRepository.findById(employee.getUserId())
+                    .orElseThrow(() -> new IllegalArgumentException(Constant.INVALID_USER_ID + employee.getUserId()));
+            StaffingCodeDetails staffingCode = activeMapping
+                    .map(StaffingCodeEmployeeMap::getStaffingCodeDetails)
+                    .orElseGet(() -> findStaffingCodeForUser(linkedUser));
+            userService.resetUserToStaffingCode(linkedUser, staffingCode);
+            userRepository.save(linkedUser);
+        }
+
         employee.setUserId(noLoginUserId);
         employee.setModifiedBy(1);
 
         employeeRepository.save(employee);
 
         return Constant.SUCCESS;
+    }
+
+    private StaffingCodeDetails findStaffingCodeForUser(User user) {
+        if (user.getType() != null
+                && ChildModules.USER_EMPLOYEE.equals(user.getType().getModuleCode())
+                && user.getReferenceId() != null) {
+            return staffingCodeRepository.findById(user.getReferenceId())
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Staffing code not found for user: " + user.getId()));
+        }
+        throw new IllegalArgumentException("No staffing code is associated with this employee or user");
     }
 
     public Page<EmployeeResponseDto> getAllEmployees(EmployeeListRequestDto dto) {

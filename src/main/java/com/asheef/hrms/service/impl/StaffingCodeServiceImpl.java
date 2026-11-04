@@ -207,7 +207,7 @@ public class StaffingCodeServiceImpl implements StaffingCodeService {
         }
 
         StaffingCodeEmployeeMap mapping = staffingCodeEmployeeMapRepository
-                .findFirstByStaffingCodeDetails_IdOrderByIdDesc(staffingCodeId)
+                .findByStaffingCodeDetails_IdAndEmployee_IdAndIsActive(staffingCodeId, employeeId, 0)
                 .orElseGet(StaffingCodeEmployeeMap::new);
         mapping.setStaffingCodeDetails(staffingCode);
         mapping.setEmployee(employee);

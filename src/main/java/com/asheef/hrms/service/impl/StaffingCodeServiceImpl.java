@@ -3,13 +3,17 @@ package com.asheef.hrms.service.impl;
 import com.asheef.hrms.constants.ChildModules;
 import com.asheef.hrms.constants.Constant;
 import com.asheef.hrms.constants.ControlModules;
+import com.asheef.hrms.entity.Employee;
 import com.asheef.hrms.entity.HrmModules;
 import com.asheef.hrms.entity.StaffingCodeDetails;
+import com.asheef.hrms.entity.StaffingCodeEmployeeMap;
 import com.asheef.hrms.entity.User;
 import com.asheef.hrms.model.dto.StaffingCodeDto;
 import com.asheef.hrms.model.dto.StaffingCodeUpdateDto;
 import com.asheef.hrms.model.response.HrmModulesResponseProjection;
 import com.asheef.hrms.repo.HrmModulesRepository;
+import com.asheef.hrms.repo.EmployeeRepository;
+import com.asheef.hrms.repo.StaffingCodeEmployeeMapRepository;
 import com.asheef.hrms.repo.StaffingCodeRepository;
 import com.asheef.hrms.repo.UserRepository;
 import com.asheef.hrms.service.StaffingCodeService;
@@ -26,6 +30,10 @@ public class StaffingCodeServiceImpl implements StaffingCodeService {
 
     private final StaffingCodeRepository staffingCodeRepository;
 
+    private final StaffingCodeEmployeeMapRepository staffingCodeEmployeeMapRepository;
+
+    private final EmployeeRepository employeeRepository;
+
     private final UserRepository userRepository;
 
     private final HrmModulesRepository hrmModulesRepository;
@@ -33,8 +41,15 @@ public class StaffingCodeServiceImpl implements StaffingCodeService {
     private final UserService userService;
 
 
-    public StaffingCodeServiceImpl(StaffingCodeRepository staffingCodeRepository, UserRepository userRepository, HrmModulesRepository hrmModulesRepository, UserService userService) {
+    public StaffingCodeServiceImpl(StaffingCodeRepository staffingCodeRepository,
+                                   StaffingCodeEmployeeMapRepository staffingCodeEmployeeMapRepository,
+                                   EmployeeRepository employeeRepository,
+                                   UserRepository userRepository,
+                                   HrmModulesRepository hrmModulesRepository,
+                                   UserService userService) {
         this.staffingCodeRepository = staffingCodeRepository;
+        this.staffingCodeEmployeeMapRepository = staffingCodeEmployeeMapRepository;
+        this.employeeRepository = employeeRepository;
         this.userRepository = userRepository;
         this.hrmModulesRepository = hrmModulesRepository;
         this.userService = userService;
@@ -176,5 +191,37 @@ public class StaffingCodeServiceImpl implements StaffingCodeService {
 
 
         return Constant.STAFFING_CODE + " " + projection.getDescription() + " " + Constant.SUCCESS;
+    }
+
+    @Override
+    @Transactional(rollbackOn = Exception.class)
+    public String mapStaffingCodeToEmployee(Integer staffingCodeId, Integer employeeId) {
+        StaffingCodeDetails staffingCode = staffingCodeRepository.findById(staffingCodeId)
+                .orElseThrow(() -> new NoSuchElementException(Constant.STAFFING_CODE + Constant.NOT_FOUND));
+
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new NoSuchElementException(Constant.EMPLOYEE_NOT_FOUND + employeeId));
+
+        if (staffingCodeEmployeeMapRepository.existsByStaffingCodeDetails_IdAndIsActive(staffingCodeId, 1)) {
+            throw new IllegalArgumentException(Constant.STAFFING_CODE + " is already mapped to an employee");
+        }
+
+        StaffingCodeEmployeeMap mapping = staffingCodeEmployeeMapRepository
+                .findFirstByStaffingCodeDetails_IdOrderByIdDesc(staffingCodeId)
+                .orElseGet(StaffingCodeEmployeeMap::new);
+        mapping.setStaffingCodeDetails(staffingCode);
+        mapping.setEmployee(employee);
+        mapping.setIsActive(1);
+
+        User createdBy = userRepository.findById(1)
+                .orElseThrow(() -> new NoSuchElementException(Constant.NOT_FOUND));
+
+        if (mapping.getId() == null) {
+            mapping.setCreatedBy(createdBy);
+        }
+        mapping.setModifiedBy(createdBy);
+        staffingCodeEmployeeMapRepository.save(mapping);
+
+        return Constant.STAFFING_CODE + " mapped to employee successfully";
     }
 }

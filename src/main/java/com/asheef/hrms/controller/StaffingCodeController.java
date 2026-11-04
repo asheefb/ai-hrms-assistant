@@ -2,6 +2,7 @@ package com.asheef.hrms.controller;
 
 import com.asheef.hrms.model.dto.StaffingCodeDto;
 import com.asheef.hrms.model.dto.StaffingCodeListDto;
+import com.asheef.hrms.model.dto.StaffingCodeToEmployeeDto;
 import com.asheef.hrms.model.dto.StaffingCodeUpdateDto;
 import com.asheef.hrms.service.StaffingCodeService;
 import com.asheef.hrms.utils.ResponseDto;
@@ -62,5 +63,12 @@ public class StaffingCodeController {
     public ResponseEntity<ResponseDto> getAllStaffingCodes(@ModelAttribute StaffingCodeListDto staffingCodeListDto) {
         return ResponseEntity.
                 ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), "msg"));
+    }
+
+    @PostMapping("/map-to-employee")
+    public ResponseEntity<ResponseDto> mapStaffingCodeToEmployee(@RequestBody @Valid StaffingCodeToEmployeeDto dto) {
+        String msg = staffingCodeService.mapStaffingCodeToEmployee(dto.getStaffingCodeId(), dto.getEmployeeId());
+        return ResponseEntity.
+                ok(new ResponseDto(Boolean.TRUE, HttpStatus.OK.value(), msg));
     }
 }

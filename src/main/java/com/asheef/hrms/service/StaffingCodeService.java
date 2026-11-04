@@ -12,4 +12,6 @@ public interface StaffingCodeService {
     String activateInactivateStaffingCode(Integer id, String isActive);
 
     String approveStaffingCode(Integer id, String status);
+
+    String mapStaffingCodeToEmployee(Integer staffingCodeId, Integer employeeId);
 }

@@ -15,7 +15,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "staffing_code_employee_map",
-        uniqueConstraints = {@UniqueConstraint(name = "uniq_staffing_code_employee", columnNames = {"manpower_id", "employee_id"})},
+        uniqueConstraints = {@UniqueConstraint(name = "uniq_staffing_code_employee", columnNames = {"manpower_id", "employee_id","is_active"})},
         indexes = {@Index(name = "idx_staffing_code_employee", columnList = "manpower_id, employee_id")}
 )
 public class StaffingCodeEmployeeMap {

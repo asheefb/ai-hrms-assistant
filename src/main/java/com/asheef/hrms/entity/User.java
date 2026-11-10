@@ -112,4 +112,22 @@ public class User {
     @UpdateTimestamp
     @Column(name = "modified", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime modified;
+
+
+    public static User create(String login, String password, String name, String firstname, String lastname, String email, String countryCode, String mobile, CommonModules profil, CommonModules type, User createdBy, User modifiedBy) {
+        User user = new User();
+        user.setLogin(login);
+        user.setPassword(password);
+        user.setName(name);
+        user.setFirstname(firstname);
+        user.setLastname(lastname);
+        user.setEmail(email);
+        user.setCountryCode(countryCode);
+        user.setMobile(mobile);
+        user.setProfil(profil);
+        user.setType(type);
+        user.setCreatedBy(createdBy);
+        user.setModifiedBy(modifiedBy);
+        return user;
+    }
 }

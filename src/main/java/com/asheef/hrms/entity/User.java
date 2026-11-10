@@ -1,6 +1,8 @@
 package com.asheef.hrms.entity;
 
+import com.asheef.hrms.constants.Constant;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -53,6 +55,10 @@ public class User {
 
     @Column(name = "phone_home", length = 155)
     private String phoneHome;
+
+    @Column(unique = true, length = 155)
+    @Pattern(regexp = Constant.EMAIL_REGEX, message = "Invalid email format")
+    private String email;
 
     @Column(name = "country_code", nullable = false, length = 5)
     private String countryCode;

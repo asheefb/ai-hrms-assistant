@@ -38,4 +38,5 @@ public class Constant {
     public static final String STATUS = "Status";
     public static final String APPROVED = "Approved";
     public static final String DEFAULT_PASSWORD = "ChangeMe++" ;
+    public static final String DEFAULT_PHONE = "00000";
 }
